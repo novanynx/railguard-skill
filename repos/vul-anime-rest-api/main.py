@@ -540,32 +540,27 @@ async def search_files(request: FileSearchRequest):
     WARNING: This endpoint is intentionally vulnerable to command injection!
     It demonstrates how NOT to handle user input that is passed to system commands.
     """
-    # INSECURE: Direct concatenation of user input into a system command
-    command = f"find {request.directory} -name '{request.pattern}' -type f"
-    
+    command = ["find", request.directory, "-name", request.pattern, "-type", "f"]
+
     # Execute the command and capture output
     try:
-        # VULNERABLE: Using shell=True makes this even more dangerous
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
-        
+        result = subprocess.run(command, shell=False, capture_output=True, text=True)
+
         if result.returncode == 0:
             # Split the output by newlines to get a list of files
             files = [f for f in result.stdout.split('\n') if f]
             return {
                 "success": True,
-                "command": command,  # Exposing the command in the response for demonstration
                 "files": files
             }
         else:
             return {
                 "success": False,
-                "command": command,
                 "error": result.stderr
             }
     except Exception as e:
         return {
             "success": False,
-            "command": command,
             "error": str(e)
         }
 
