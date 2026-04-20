@@ -24,9 +24,11 @@ app = FastAPI(title="Anime Recommendations API",
               version="1.0.0")
 
 # Enable CORS
+_cors_origins_env = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:8000")
+_cors_origins = [origin.strip() for origin in _cors_origins_env.split(",") if origin.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
