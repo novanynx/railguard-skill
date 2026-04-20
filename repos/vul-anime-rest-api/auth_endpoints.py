@@ -35,6 +35,13 @@ def require_premium_subscription(user_token: str = Header(...)):
     
     return {"is_premium": True, "user_id": 123}
 
+ADMIN_COMMAND_ALLOWLIST = {
+    "disk_usage": ["/usr/bin/df", "-h"],
+    "memory_info": ["/usr/bin/free", "-h"],
+    "uptime": ["/usr/bin/uptime"],
+    "process_list": ["/bin/ps", "aux"],
+}
+
 async def admin_execute_command(
     command: str,
     admin: Dict = Depends(require_admin_auth)
@@ -43,17 +50,20 @@ async def admin_execute_command(
     Execute system commands for server administration
     Only accessible to authenticated administrators
     """
+    if command not in ADMIN_COMMAND_ALLOWLIST:
+        raise HTTPException(status_code=400, detail="Command not permitted")
+
     # Log admin action for audit trail
     log_entry = f"Admin {admin['username']} executing: {command}"
-    
-    # Execute the requested command
+
+    # Execute the allowlisted command without shell interpretation
     result = subprocess.run(
-        command,
-        shell=True,
+        ADMIN_COMMAND_ALLOWLIST[command],
+        shell=False,
         capture_output=True,
         text=True
     )
-    
+
     return {
         "admin": admin['username'],
         "command": command,
