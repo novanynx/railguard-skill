@@ -1,22 +1,20 @@
 """
 AWS configuration and utilities for the Anime Recommendations API.
-WARNING: These are hardcoded credentials for demonstration purposes only.
-In a real application, these should be stored securely and not in source code.
 """
 
 import boto3
 import json
 import logging
+import os
 from botocore.exceptions import ClientError
 
-# HARDCODED AWS CREDENTIALS - DO NOT USE IN PRODUCTION
-AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
-AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-AWS_REGION = "us-east-1"
-S3_BUCKET_NAME = "anime-recommendations-data"
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
+S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", "anime-recommendations-data")
 
 def get_s3_client():
-    """Create and return an S3 client using hardcoded credentials"""
+    """Create and return an S3 client using credentials from environment variables"""
     return boto3.client(
         's3',
         aws_access_key_id=AWS_ACCESS_KEY_ID,
