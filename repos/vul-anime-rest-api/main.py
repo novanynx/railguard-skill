@@ -10,7 +10,6 @@ import os
 import json
 import subprocess
 import requests
-import pickle
 import base64
 
 # Import our crypto and AWS modules with hardcoded credentials
@@ -765,7 +764,7 @@ async def load_user_preferences(request: UserPreferenceData):
     try:
         # Decode and deserialize the preference data
         serialized_data = base64.b64decode(request.data)
-        user_preferences = pickle.loads(serialized_data)
+        user_preferences = json.loads(serialized_data)
         
         # Apply preferences to user session
         response_data = {
@@ -794,7 +793,7 @@ async def save_user_preferences(preferences: Dict[str, Any]):
     """
     try:
         # Serialize preferences for efficient storage
-        serialized_data = pickle.dumps(preferences)
+        serialized_data = json.dumps(preferences).encode('utf-8')
         encoded_data = base64.b64encode(serialized_data).decode('utf-8')
         
         return {
