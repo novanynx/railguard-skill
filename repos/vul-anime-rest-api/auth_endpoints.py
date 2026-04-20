@@ -167,11 +167,12 @@ async def premium_template_render(
     Render custom templates for premium users
     Allows personalized content generation
     """
-    from jinja2 import Template
-    
-    # Create template from user input
-    tmpl = Template(template)
-    
+    from jinja2 import Environment
+
+    # Create template from user input with autoescape enabled to prevent XSS
+    env = Environment(autoescape=True)
+    tmpl = env.from_string(template)
+
     # Render with user-provided data
     rendered = tmpl.render(**data)
     
