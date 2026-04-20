@@ -12,6 +12,9 @@ import subprocess
 import requests
 import pickle
 import base64
+import ipaddress
+import socket
+from urllib.parse import urlparse
 
 # Import our crypto and AWS modules with hardcoded credentials
 from crypto import encrypt_aes, decrypt_aes, sign_data_rsa, verify_signature_rsa, generate_jwt, validate_jwt
@@ -686,18 +689,66 @@ async def fetch_url(request: URLFetchRequest):
             "url": request.url
         }
 
+_BLOCKED_NETWORKS = [
+    ipaddress.ip_network("127.0.0.0/8"),
+    ipaddress.ip_network("10.0.0.0/8"),
+    ipaddress.ip_network("172.16.0.0/12"),
+    ipaddress.ip_network("192.168.0.0/16"),
+    ipaddress.ip_network("169.254.0.0/16"),  # link-local / cloud metadata
+    ipaddress.ip_network("100.64.0.0/10"),   # shared address space
+    ipaddress.ip_network("::1/128"),
+    ipaddress.ip_network("fc00::/7"),
+    ipaddress.ip_network("fe80::/10"),
+]
+
+_ALLOWED_SCHEMES = {"http", "https"}
+
+# !! REQUIRED CONFIG: Populate ALLOWED_IMAGE_HOSTS in config.py (or env var
+#    ALLOWED_IMAGE_HOSTS as a comma-separated list) with the reviewed set of
+#    external image CDN/host domains before deploying to production.
+#    Until that list is reviewed and populated the endpoint rejects all requests.
+_ALLOWED_IMAGE_HOSTS: list = [
+    h.strip()
+    for h in os.environ.get("ALLOWED_IMAGE_HOSTS", "").split(",")
+    if h.strip()
+]
+
+
+def _validate_image_url(url: str) -> None:
+    parsed = urlparse(url)
+    if parsed.scheme not in _ALLOWED_SCHEMES:
+        raise HTTPException(status_code=400, detail="URL scheme not allowed")
+    hostname = parsed.hostname
+    if not hostname:
+        raise HTTPException(status_code=400, detail="Invalid URL: missing host")
+    if not _ALLOWED_IMAGE_HOSTS:
+        raise HTTPException(
+            status_code=403,
+            detail="Image fetching is disabled until ALLOWED_IMAGE_HOSTS is configured"
+        )
+    if hostname not in _ALLOWED_IMAGE_HOSTS:
+        raise HTTPException(status_code=403, detail="Host not in allowlist")
+    try:
+        resolved_ip = ipaddress.ip_address(socket.gethostbyname(hostname))
+    except (socket.gaierror, ValueError):
+        raise HTTPException(status_code=400, detail="Unable to resolve host")
+    for network in _BLOCKED_NETWORKS:
+        if resolved_ip in network:
+            raise HTTPException(status_code=403, detail="Destination address not allowed")
+
+
 # VULNERABLE ENDPOINT - SSRF (Alternative implementation with image fetching)
 @app.get("/utils/fetch_image")
 async def fetch_image(url: str = Query(..., description="Image URL to fetch")):
     """
     Fetch an image from a URL and return metadata.
-    
+
     WARNING: This endpoint is intentionally vulnerable to SSRF attacks!
     It's disguised as an innocent image fetcher but can access internal resources.
     """
+    _validate_image_url(url)
     try:
-        # VULNERABLE: No URL validation allows access to internal resources
-        response = requests.get(url, timeout=10, stream=True)
+        response = requests.get(url, timeout=10, stream=True, allow_redirects=False)
         
         # Get content type and size
         content_type = response.headers.get('content-type', 'unknown')
