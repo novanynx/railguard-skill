@@ -76,8 +76,8 @@ RSA_PUBLIC_KEY = load_pem_public_key(
     backend=default_backend()
 )
 
-# HARDCODED JWT SECRET - DO NOT USE IN PRODUCTION
-JWT_SECRET = "ThisIsAVeryLongAndSecureJWTSecretKeyThatShouldNeverBeHardcoded"
+# JWT secret loaded from environment variable
+JWT_SECRET = os.environ.get("JWT_SECRET")
 
 def encrypt_aes(plaintext):
     """Encrypt data using AES-256 in CBC mode with PKCS7 padding"""
