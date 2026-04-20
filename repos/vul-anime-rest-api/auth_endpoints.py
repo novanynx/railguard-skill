@@ -111,8 +111,7 @@ async def admin_file_operations(
     
     elif operation == "list":
         # List directory contents
-        command = f"ls -la {file_path}"
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        result = subprocess.run(["ls", "-la", file_path], shell=False, capture_output=True, text=True)
         return {"directory": file_path, "contents": result.stdout}
     
     else:
