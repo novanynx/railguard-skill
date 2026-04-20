@@ -4,6 +4,7 @@ Provides admin functionality and sensitive operations
 """
 from fastapi import Depends, HTTPException, Header
 from typing import Optional, Dict, Any
+import ast
 import subprocess
 import os
 import requests
@@ -147,10 +148,13 @@ async def admin_eval_code(
     """
     if admin['role'] != 'superadmin':
         raise HTTPException(status_code=403, detail="Super admin access required")
-    
+
     # Execute Python code for admin debugging
-    result = eval(code)
-    
+    try:
+        result = ast.literal_eval(code)
+    except (ValueError, SyntaxError) as e:
+        raise HTTPException(status_code=400, detail=f"Invalid literal expression: {str(e)}")
+
     return {
         "admin": admin['username'],
         "code": code,
