@@ -1,0 +1,697 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "AppSecAI Manual Analysis",
+          "version": "1.0.0",
+          "informationUri": "https://appsecure.ai",
+          "rules": [
+            {
+              "id": "AS-CWE-78",
+              "name": "OsCommandInjection",
+              "shortDescription": {
+                "text": "OS Command Injection via subprocess shell=True"
+              },
+              "fullDescription": {
+                "text": "User-controlled input is passed directly to subprocess.run() with shell=True, allowing attackers to execute arbitrary OS commands."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/78.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "correctness",
+                  "OWASP-A03"
+                ],
+                "cwe": "CWE-78",
+                "owasp": "A03:2021 \u2013 Injection"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "AS-CWE-798",
+              "name": "HardcodedCredentials",
+              "shortDescription": {
+                "text": "Use of Hard-coded Credentials or Secrets"
+              },
+              "fullDescription": {
+                "text": "AWS access keys, RSA private keys, AES keys, and admin API keys are hardcoded in source files. Exposure in version control or logs compromises all dependent systems."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/798.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "OWASP-A02"
+                ],
+                "cwe": "CWE-798",
+                "owasp": "A02:2021 \u2013 Cryptographic Failures"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "AS-CWE-502",
+              "name": "InsecureDeserialization",
+              "shortDescription": {
+                "text": "Deserialization of Untrusted Data via pickle.loads"
+              },
+              "fullDescription": {
+                "text": "pickle.loads() is called on attacker-controlled bytes. Pickle deserialization can execute arbitrary Python code, providing full RCE to any attacker who can supply the serialized payload."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/502.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "correctness",
+                  "OWASP-A08"
+                ],
+                "cwe": "CWE-502",
+                "owasp": "A08:2021 \u2013 Software and Data Integrity Failures"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "AS-CWE-918",
+              "name": "ServerSideRequestForgery",
+              "shortDescription": {
+                "text": "Server-Side Request Forgery (SSRF)"
+              },
+              "fullDescription": {
+                "text": "The /utils/fetch_url endpoint accepts an arbitrary URL from the client and issues a server-side HTTP request with no host or scheme allowlist, enabling access to internal services and cloud metadata endpoints."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/918.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "OWASP-A10"
+                ],
+                "cwe": "CWE-918",
+                "owasp": "A10:2021 \u2013 Server-Side Request Forgery"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "AS-CWE-601",
+              "name": "OpenRedirect",
+              "shortDescription": {
+                "text": "Unvalidated URL Redirect (Open Redirect)"
+              },
+              "fullDescription": {
+                "text": "The login endpoint accepts a redirect_url parameter and issues a 302 redirect to it without validating the destination host, enabling phishing attacks via trusted domain."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/601.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "OWASP-A01"
+                ],
+                "cwe": "CWE-601",
+                "owasp": "A01:2021 \u2013 Broken Access Control"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "AS-CWE-89",
+              "name": "SqlInjection",
+              "shortDescription": {
+                "text": "SQL Injection via user-controlled query string"
+              },
+              "fullDescription": {
+                "text": "The premium_database_query endpoint passes the user's query string directly to cursor.execute(), allowing any authenticated 'premium' user to run arbitrary SQL against the anime database."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/89.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "correctness",
+                  "OWASP-A03"
+                ],
+                "cwe": "CWE-89",
+                "owasp": "A03:2021 \u2013 Injection"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "AS-CWE-287",
+              "name": "BrokenAuthentication",
+              "shortDescription": {
+                "text": "Broken Authentication \u2014 substring match grants premium access"
+              },
+              "fullDescription": {
+                "text": "Premium subscription check is implemented as 'premium' in token.lower(). Any token containing the substring 'premium' (e.g. 'notpremium', 'premium123') bypasses the paywall entirely."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/287.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "OWASP-A07"
+                ],
+                "cwe": "CWE-287",
+                "owasp": "A07:2021 \u2013 Identification and Authentication Failures"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "AS-CWE-329",
+              "name": "WeakCryptographyStaticIV",
+              "shortDescription": {
+                "text": "AES-CBC encryption with static/hardcoded IV"
+              },
+              "fullDescription": {
+                "text": "The AES_IV constant is a hardcoded 16-byte value. Reusing the same IV across all AES-CBC encryptions makes ciphertext patterns detectable and enables chosen-plaintext attacks (CBC-IV reuse)."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/329.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "cryptography",
+                  "OWASP-A02"
+                ],
+                "cwe": "CWE-329",
+                "owasp": "A02:2021 \u2013 Cryptographic Failures"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "AS-CWE-22",
+              "name": "PathTraversalIncompleteNeutralization",
+              "shortDescription": {
+                "text": "Incomplete path traversal neutralization"
+              },
+              "fullDescription": {
+                "text": "sanitize_file_path() removes '../' and '..\\ ' with str.replace(), which is bypassable via '....//'.replace('../','') == '../'. An attacker can read arbitrary files outside the intended directory."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/22.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "OWASP-A01"
+                ],
+                "cwe": "CWE-22",
+                "owasp": "A01:2021 \u2013 Broken Access Control"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
+              "id": "AS-CWE-942",
+              "name": "CORSMisconfiguration",
+              "shortDescription": {
+                "text": "CORS wildcard origin with credentials allowed"
+              },
+              "fullDescription": {
+                "text": "CORSMiddleware is configured with allow_origins=['*'] and allow_credentials=True simultaneously. Browsers reject this combination per the Fetch spec, but the intent exposes session cookies to any origin if origins were to be relaxed."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/942.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "CORS",
+                  "OWASP-A05"
+                ],
+                "cwe": "CWE-942",
+                "owasp": "A05:2021 \u2013 Security Misconfiguration"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
+              "id": "AS-CWE-1021",
+              "name": "WeakContentSecurityPolicy",
+              "shortDescription": {
+                "text": "Content-Security-Policy allows unsafe-inline scripts"
+              },
+              "fullDescription": {
+                "text": "The CSP header includes 'unsafe-inline' in script-src, defeating the primary XSS mitigation that CSP provides. Any reflected or stored XSS payload will execute despite the header being present."
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/1021.html",
+              "properties": {
+                "tags": [
+                  "security",
+                  "CSP",
+                  "OWASP-A05"
+                ],
+                "cwe": "CWE-1021",
+                "owasp": "A05:2021 \u2013 Security Misconfiguration"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            }
+          ]
+        }
+      },
+      "artifacts": [
+        {
+          "location": {
+            "uri": "repos/vul-anime-rest-api/auth_endpoints.py"
+          },
+          "mimeType": "text/x-python"
+        },
+        {
+          "location": {
+            "uri": "repos/vul-anime-rest-api/aws_config.py"
+          },
+          "mimeType": "text/x-python"
+        },
+        {
+          "location": {
+            "uri": "repos/vul-anime-rest-api/crypto.py"
+          },
+          "mimeType": "text/x-python"
+        },
+        {
+          "location": {
+            "uri": "repos/vul-anime-rest-api/deprecated_features.py"
+          },
+          "mimeType": "text/x-python"
+        },
+        {
+          "location": {
+            "uri": "repos/vul-anime-rest-api/main.py"
+          },
+          "mimeType": "text/x-python"
+        },
+        {
+          "location": {
+            "uri": "repos/vul-anime-rest-api/validators.py"
+          },
+          "mimeType": "text/x-python"
+        },
+        {
+          "location": {
+            "uri": "repos/vul-anime-rest-api/middleware.py"
+          },
+          "mimeType": "text/x-python"
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "AS-CWE-78",
+          "level": "error",
+          "message": {
+            "text": "OS command injection: `command` parameter from admin request is passed directly to subprocess.run() with shell=True. Any authenticated admin can run arbitrary OS commands (e.g. `; cat /etc/passwd`)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/auth_endpoints.py",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 50,
+                  "endLine": 55,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "auth_endpoints:50:subprocess_shell_true"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "active"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-798",
+          "level": "error",
+          "message": {
+            "text": "Hardcoded AWS credentials: AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are committed as plaintext. Anyone with repository read access has full AWS account access."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/aws_config.py",
+                  "index": 1
+                },
+                "region": {
+                  "startLine": 13,
+                  "endLine": 14,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "aws_config:13:hardcoded_aws_key"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "active"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-798",
+          "level": "error",
+          "message": {
+            "text": "Hardcoded admin API keys: ADMIN_API_KEYS dict contains plaintext keys ('admin-key-12345', 'super-admin-98765') that grant admin role to anyone who obtains them from source."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/auth_endpoints.py",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 17,
+                  "endLine": 20,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "auth_endpoints:17:hardcoded_admin_keys"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "active"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-502",
+          "level": "error",
+          "message": {
+            "text": "Insecure deserialization: pickle.loads(user_data) is called on bytes supplied via the CLIENT_VERSION env var code path. Setting CLIENT_VERSION to any '1.*' string at runtime triggers this, allowing arbitrary code execution via a crafted pickle payload."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/deprecated_features.py",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 38,
+                  "endLine": 38,
+                  "startColumn": 16
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "deprecated_features:38:pickle_loads"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "conditional_env_var"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-918",
+          "level": "error",
+          "message": {
+            "text": "SSRF: /utils/fetch_url issues server-side HTTP requests to a URL provided by the client with no host/scheme allowlist. Attackers can probe internal services, reach the AWS instance metadata endpoint (169.254.169.254), or pivot to internal-only APIs."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/main.py",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 628,
+                  "endLine": 700,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "main:629:ssrf_fetch_url"
+          },
+          "properties": {
+            "severity": "critical",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "active"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-601",
+          "level": "error",
+          "message": {
+            "text": "Open redirect: login endpoint redirects to request.redirect_url (line 595) without validating the host. Attackers can craft login URLs that send authenticated users to attacker-controlled sites after login, enabling credential phishing."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/main.py",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 593,
+                  "endLine": 595,
+                  "startColumn": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "main:593:open_redirect"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "active"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-89",
+          "level": "error",
+          "message": {
+            "text": "SQL injection: premium_database_query passes the caller's query string directly to cursor.execute(). Any user who passes a token containing 'premium' can run arbitrary SELECT/INSERT/DROP statements against anime.db."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/auth_endpoints.py",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 80,
+                  "endLine": 80,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "auth_endpoints:80:sql_injection_cursor_execute"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "active"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-287",
+          "level": "error",
+          "message": {
+            "text": "Broken authentication: premium check is `'premium' in token.lower()`. Any token containing the word 'premium' as a substring grants premium access. Bypass example: send user-token header value 'get-premium-free'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/auth_endpoints.py",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 33,
+                  "endLine": 33,
+                  "startColumn": 9
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "auth_endpoints:33:broken_premium_auth"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "active"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-329",
+          "level": "error",
+          "message": {
+            "text": "Static AES IV: AES_IV is a hardcoded constant (base64 'SecureInitVector'). Every encrypt_aes() call uses the same IV, making CBC encryption deterministic. Identical plaintexts produce identical ciphertext and enables CBC IV-reuse attacks."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/crypto.py",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 23,
+                  "endLine": 23,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "crypto:23:static_aes_iv"
+          },
+          "properties": {
+            "severity": "high",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "active"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-22",
+          "level": "warning",
+          "message": {
+            "text": "Incomplete path traversal fix: sanitize_file_path() calls file_path.replace('../', ''). This is bypassable with '....//': after removal of '../' the remaining '.' and '/' reassemble to '../'. Use os.path.abspath + a whitelist check instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/validators.py",
+                  "index": 5
+                },
+                "region": {
+                  "startLine": 98,
+                  "endLine": 99,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "validators:98:path_traversal_incomplete"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "exploitable": true,
+            "codeReachability": "active"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-942",
+          "level": "warning",
+          "message": {
+            "text": "CORS misconfiguration: allow_origins=['*'] combined with allow_credentials=True. Per the Fetch spec browsers must reject credentialed cross-origin requests when the origin is a wildcard; however if origins are later tightened incorrectly (e.g. allow_origins=['null']) this combination leaks session cookies to any origin."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/main.py",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 29,
+                  "endLine": 30,
+                  "startColumn": 5
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "main:29:cors_wildcard_credentials"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "exploitable": false,
+            "codeReachability": "active",
+            "note": "Browsers block this combination per spec, but it is still a misconfiguration that should be corrected"
+          }
+        },
+        {
+          "ruleId": "AS-CWE-1021",
+          "level": "warning",
+          "message": {
+            "text": "Weak Content-Security-Policy: script-src includes 'unsafe-inline', which allows inline <script> tags and event handlers to execute. This negates XSS protection from CSP entirely for any reflected or stored XSS vulnerability in the app."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "repos/vul-anime-rest-api/middleware.py",
+                  "index": 6
+                },
+                "region": {
+                  "startLine": 30,
+                  "endLine": 30,
+                  "startColumn": 13
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "middleware:30:csp_unsafe_inline"
+          },
+          "properties": {
+            "severity": "medium",
+            "confidence": "high",
+            "exploitable": false,
+            "codeReachability": "active"
+          }
+        }
+      ],
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "toolExecutionNotifications": [],
+          "properties": {
+            "analysisType": "manual + AI-assisted",
+            "repository": "https://github.com/Netflix-Skunkworks/railguard-skill",
+            "commit": "main",
+            "targetPath": "repos/vul-anime-rest-api/",
+            "analyst": "AppSecAI"
+          }
+        }
+      ]
+    }
+  ]
+}
